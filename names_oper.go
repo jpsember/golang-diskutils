@@ -71,7 +71,7 @@ func (oper *FilenamesOper) Perform(app *App) {
 		var operSourceDir Path
 		problem := ""
 		for {
-			operSourceDir, problem = procPath("Source directory", oper.config.Source())
+			operSourceDir, problem = procPath(app, "Source directory", oper.config.Source())
 			if problem != "" {
 				break
 			}

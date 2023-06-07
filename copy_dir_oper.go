@@ -7,7 +7,6 @@ import (
 	. "golang-diskutils/gen"
 	"io"
 	"os"
-	"path/filepath"
 )
 
 type CopyDirOper struct {
@@ -36,30 +35,28 @@ func (oper *CopyDirOper) UserCommand() string {
 	return "copydir"
 }
 
-func procPath(desc string, expr string) (Path, string) {
+func procPath(app *App, desc string, expr string) (Path, string) {
 	var err error
-	problem := ""
-	result := EmptyPath
+	var result Path
+
 	for {
-		if expr == "" {
-			problem = "path is empty"
-			break
-		}
-		absPath, err := filepath.Abs(expr)
+		result, err = NewPath(expr)
 		if err != nil {
 			break
 		}
-		result, err = NewPath(absPath)
-		if err != nil {
-			break
+
+		if !result.IsAbs() {
+			result, err = app.StartDir().Join(result.String())
+			if err != nil {
+				break
+			}
+			result, err = result.GetAbs()
 		}
 		break
 	}
+	problem := ""
 	if err != nil {
-		problem = err.Error()
-	}
-	if problem != "" {
-		problem = desc + "; problem: " + problem
+		problem = desc + "; problem: " + err.Error()
 	}
 	return result, problem
 }
@@ -71,9 +68,9 @@ func (oper *CopyDirOper) Perform(app *App) {
 		var operSourceDir, operDestDir Path
 		problem := ""
 		for {
-			operSourceDir, problem = procPath("Source directory", oper.config.Source())
+			operSourceDir, problem = procPath(app, "source directory", oper.config.Source())
 			if problem == "" {
-				operDestDir, problem = procPath("Target directory", oper.config.Dest())
+				operDestDir, problem = procPath(app, "dest directory", oper.config.Dest())
 			}
 			if problem != "" {
 				break
