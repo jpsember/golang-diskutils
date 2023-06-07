@@ -14,7 +14,6 @@ type CopyDirOper struct {
 	errLog     ErrLog
 	sourcePath Path
 	destPath   Path
-	errCount   int
 	config     CopyDirConfig
 	verifyTs   int
 }

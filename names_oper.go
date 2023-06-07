@@ -16,10 +16,7 @@ type FilenamesOper struct {
 	errLog          ErrLog
 	errPath         Path
 	sourcePath      Path
-	destPath        Path
-	errCount        int
 	config          NamesConfig
-	namesCount      int
 	pattern         *regexp.Regexp
 	deleteFlag      bool
 	sourcePrefixLen int
@@ -63,6 +60,10 @@ func (oper *FilenamesOper) UserCommand() string {
 	return "names"
 }
 
+func (oper *FilenamesOper) relToSource(path Path) string {
+	return relativePath(path, oper.sourcePath)
+}
+
 func (oper *FilenamesOper) Perform(app *App) {
 	Todo("Option to rename files, e.g. trimming whitespace, changing dashes")
 	oper.SetVerbose(app.Verbose())
@@ -95,6 +96,7 @@ func (oper *FilenamesOper) Perform(app *App) {
 		logPath = app.StartDir().JoinM(logPath.String())
 	}
 	oper.errLog = NewErrLog(logPath)
+	oper.errLog.SkipHeader = app.HasTestArgs()
 	oper.errLog.Clean = oper.config.CleanLog()
 
 	rootInfo := NewDirInfo(oper.sourcePath, nil)
@@ -107,6 +109,7 @@ func (oper *FilenamesOper) Perform(app *App) {
 }
 
 func (oper *FilenamesOper) relativePath(path Path) string {
+	Todo("avoid calling this")
 	x := path.String()
 	if len(x) < oper.sourcePrefixLen {
 		BadArg("relativePath argument:", path, "less than source", oper.sourcePath)
@@ -134,7 +137,7 @@ func (oper *FilenamesOper) processDir(dirInfo DirInfo) {
 	}
 	dirEntries, err := os.ReadDir(dir.String())
 	if err != nil {
-		oper.errLog.Add(err, "unable to ReadDir", dir)
+		oper.errLog.Add(err, "unable to ReadDir", oper.relToSource(dir))
 		return
 	}
 
@@ -170,11 +173,11 @@ func (oper *FilenamesOper) processDir(dirInfo DirInfo) {
 
 		stat, err := os.Stat(sourceFile.String())
 		if err != nil {
-			oper.errLog.Add(err, "unable to Stat", sourceFile)
+			oper.errLog.Add(err, "unable to Stat", oper.relToSource(sourceFile))
 			continue
 		}
 		if !stat.Mode().IsRegular() {
-			oper.errLog.Add(err, "file is not a regular file", sourceFile)
+			oper.errLog.Add(err, "file is not a regular file", oper.relToSource(sourceFile))
 			continue
 		}
 
@@ -231,7 +234,6 @@ var windowsTempPattern = Regexp(`^~\$`)
 
 func (oper *FilenamesOper) examineFilename(p Path) {
 	oper.deleteFlag = false
-	oper.namesCount++
 	base := p.Base()
 
 	// See https://en.wikipedia.org/wiki/Tilde
@@ -242,13 +244,9 @@ func (oper *FilenamesOper) examineFilename(p Path) {
 		case Ignore:
 			break
 		case Warn:
-			if oper.config.VerboseProblems() {
-				oper.errLog.Add(Warning, "temporary Word file:", Quoted(base), "in", p)
-			} else {
-				oper.errLog.Add(Warning, "Word:", Quoted(base))
-			}
+			oper.errLog.Add(Warning, "Word:", oper.relToSource(p))
 		case Delete:
-			oper.errLog.Add(Warning, "Deleting Word:", Quoted(base))
+			oper.errLog.Add(Warning, "Deleting Word:", oper.relToSource(p))
 			oper.deleteFlag = true
 		}
 		return
@@ -256,11 +254,7 @@ func (oper *FilenamesOper) examineFilename(p Path) {
 
 	if !oper.pattern.MatchString(base) {
 		summary := oper.highlightStrangeCharacters(base)
-		if oper.config.VerboseProblems() {
-			oper.errLog.Add(Warning, "strange characters:", summary, "in", p)
-		} else {
-			oper.errLog.Add(Warning, "Chars:", summary)
-		}
+		oper.errLog.Add(Warning, "Chars:", summary, "in", oper.relToSource(p))
 	}
 }
 
