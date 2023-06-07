@@ -14,13 +14,14 @@ type ErrLogStruct struct {
 	Errors      int
 	Warnings    int
 	Clean       bool
+	SkipHeader  bool
 }
 
 type ErrLog = *ErrLogStruct
 
-func NewErrLog(outputFile string) ErrLog {
+func NewErrLog(path Path) ErrLog {
 	return &ErrLogStruct{
-		path: NewPathOrEmptyM(outputFile),
+		path: path,
 	}
 }
 
@@ -53,7 +54,7 @@ func (log ErrLog) Add(err error, messages ...any) error {
 
 	outMsg := errMsg + "\n"
 
-	if starting {
+	if starting && !log.SkipHeader {
 		outMsg = Dashes + time.Now().Format(time.ANSIC) + "\n" + Dashes + outMsg
 	}
 	f, err := os.OpenFile(log.path.String(),

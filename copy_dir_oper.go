@@ -45,13 +45,7 @@ func procPath(app *App, desc string, expr string) (Path, string) {
 			break
 		}
 
-		if !result.IsAbs() {
-			result, err = app.StartDir().Join(result.String())
-			if err != nil {
-				break
-			}
-			result, err = result.GetAbs()
-		}
+		result = makeAbs(result, app.StartDir())
 		break
 	}
 	problem := ""
@@ -59,6 +53,38 @@ func procPath(app *App, desc string, expr string) (Path, string) {
 		problem = desc + "; problem: " + err.Error()
 	}
 	return result, problem
+}
+
+func makeAbs(path Path, absPath Path) Path {
+	if path.IsAbs() {
+		return path
+	}
+	return absPath.JoinM(path.String())
+}
+
+func relativePath(path Path, to Path) string {
+	pathStr := path.String()
+	toStr := to.String()
+	i := len(pathStr)
+	j := len(toStr)
+	if i == 0 || j == 0 || i < j {
+		BadArg("can't make:", CR, INDENT, Quoted(pathStr), CR, OUTDENT, "relative to:", CR, INDENT, Quoted(toStr))
+	}
+	var result string
+	if i == j {
+		result = ""
+	} else {
+		result = pathStr[j+1:]
+	}
+	return result
+}
+
+func (oper *CopyDirOper) relToSource(path Path) string {
+	return relativePath(path, oper.sourcePath)
+}
+
+func (oper *CopyDirOper) relToTarget(path Path) string {
+	return relativePath(path, oper.destPath)
 }
 
 func (oper *CopyDirOper) Perform(app *App) {
@@ -89,7 +115,12 @@ func (oper *CopyDirOper) Perform(app *App) {
 		oper.destPath = operDestDir
 	}
 
-	oper.errLog = NewErrLog(oper.config.Log())
+	logPath := NewPathOrEmptyM(oper.config.Log())
+	if logPath.NonEmpty() {
+		logPath = app.StartDir().JoinM(logPath.String())
+	}
+	oper.errLog = NewErrLog(logPath)
+	oper.errLog.SkipHeader = app.HasTestArgs()
 	oper.errLog.Clean = oper.config.CleanLog()
 
 	dirStack := NewArray[Path]()
@@ -97,23 +128,20 @@ func (oper *CopyDirOper) Perform(app *App) {
 	dirStack.Add(oper.sourcePath)
 	depthStack.Add(0)
 
-	sourcePrefixLen := len(oper.sourcePath.String())
-	targetPrefix := oper.destPath.String()
-
 	for dirStack.NonEmpty() {
 		dir := dirStack.Pop()
 		depth := depthStack.Pop()
 
 		// Make target directory if it doesn't already exist
-		targetDir := NewPathM(targetPrefix + dir.String()[sourcePrefixLen:])
+		targetDir := oper.destPath.JoinM(oper.relToSource(dir))
 		err := targetDir.MkDirs()
 		if err != nil {
-			oper.errLog.Add(err, "unable to make directory", dir)
+			oper.errLog.Add(err, "unable to make destination directory", oper.relToTarget(targetDir))
 			continue
 		}
 		dirEntries, err := os.ReadDir(dir.String())
 		if err != nil {
-			oper.errLog.Add(err, "unable to read directory contents", dir)
+			oper.errLog.Add(err, "unable to read directory contents", oper.relToSource(dir))
 			continue
 		}
 
@@ -125,7 +153,7 @@ func (oper *CopyDirOper) Perform(app *App) {
 			// Check if source is a symlink.  If so, skip it.
 			srcFileInfo, err := os.Lstat(sourceFile.String())
 			if err != nil {
-				oper.errLog.Add(err, "unable to get Lstat for", sourceFile)
+				oper.errLog.Add(err, "unable to get Lstat for", oper.relToSource(sourceFile))
 				continue
 			}
 			if srcFileInfo.Mode()&os.ModeSymlink == os.ModeSymlink {
@@ -134,20 +162,20 @@ func (oper *CopyDirOper) Perform(app *App) {
 
 			if windowsTempPattern.MatchString(sourceFile.Base()) {
 				if !oper.config.RetainMicrosoft() {
-					oper.errLog.Add(Warning, "skipping Word backup file", sourceFile)
+					oper.errLog.Add(Warning, "skipping Word backup file", oper.relToSource(sourceFile))
 					continue
 				}
 			}
 
-			sourceFileSuffix := sourceFile.String()[sourcePrefixLen:]
-			targetFile := NewPathM(targetPrefix + sourceFileSuffix)
+			sourceFileSuffix := oper.relToSource(sourceFile)
+			targetFile := oper.destPath.JoinM(sourceFileSuffix)
 
 			targetFileExists := targetFile.Exists()
 			// If target file already exists, verify it is the same type (dir or file) as source
 			if targetFileExists {
 				if sourceFile.IsDir() != targetFile.IsDir() {
-					oper.errLog.Add(err, "source is not same file/dir type as target:", sourceFile, INDENT,
-						"vs", targetFile)
+					oper.errLog.Add(err, "source is not same file/dir type as target:", oper.relToSource(sourceFile), INDENT,
+						"vs", oper.relToTarget(targetFile))
 					continue
 				}
 
@@ -161,11 +189,11 @@ func (oper *CopyDirOper) Perform(app *App) {
 
 			sourceFileStat, err := os.Stat(sourceFile.String())
 			if err != nil {
-				oper.errLog.Add(err, "getting Stat", sourceFile)
+				oper.errLog.Add(err, "getting Stat", oper.relToSource(sourceFile))
 				continue
 			}
 			if !sourceFileStat.Mode().IsRegular() {
-				oper.errLog.Add(err, "source file is not a regular file", sourceFile)
+				oper.errLog.Add(err, "source file is not a regular file", oper.relToSource(sourceFile))
 				continue
 			}
 
@@ -179,7 +207,7 @@ func (oper *CopyDirOper) Perform(app *App) {
 				// Only continue if source is newer
 				targetFileStat, err := os.Stat(targetFile.String())
 				if err != nil {
-					oper.errLog.Add(err, "getting Stat", targetFile)
+					oper.errLog.Add(err, "getting Stat", oper.relToTarget(targetFile))
 					continue
 				}
 
@@ -197,13 +225,13 @@ func (oper *CopyDirOper) Perform(app *App) {
 
 			err = copyFileContents(sourceFile, targetFile)
 			if err != nil {
-				oper.errLog.Add(err, action, "file contents", sourceFile, targetFile)
+				oper.errLog.Add(err, action, "file contents", oper.relToSource(sourceFile), oper.relToTarget(targetFile))
 				continue
 			}
 
 			err = os.Chtimes(targetFile.String(), modifiedTime, modifiedTime)
 			if err != nil {
-				oper.errLog.Add(err, "unable to set modified time", targetFile)
+				oper.errLog.Add(err, "unable to set modified time", oper.relToTarget(targetFile))
 				continue
 			}
 

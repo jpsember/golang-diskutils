@@ -1,1 +1,4 @@
-{ "TestCopyDir" : 8873 }
+{      "TestCopyDir" : 8873,
+  "TestStrangeChars" : 3633,
+   "TestWordBackups" : 8254
+}

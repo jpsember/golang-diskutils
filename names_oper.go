@@ -90,7 +90,11 @@ func (oper *FilenamesOper) Perform(app *App) {
 
 	oper.sourcePrefixLen = len(oper.sourcePath.Parent().String()) + 1 // add 1 for separator
 
-	oper.errLog = NewErrLog(oper.config.Log())
+	logPath := NewPathOrEmptyM(oper.config.Log())
+	if logPath.NonEmpty() {
+		logPath = app.StartDir().JoinM(logPath.String())
+	}
+	oper.errLog = NewErrLog(logPath)
 	oper.errLog.Clean = oper.config.CleanLog()
 
 	rootInfo := NewDirInfo(oper.sourcePath, nil)

@@ -2,14 +2,11 @@ package main
 
 import (
 	. "github.com/jpsember/golang-base/app"
-	. "github.com/jpsember/golang-base/base"
 	. "github.com/jpsember/golang-base/json"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
-	"testing" // We still need to import the standard testing package
+	"testing"
 )
-
-var _ = Pr
 
 var tree1 = `
 {"a.txt" : "",
@@ -18,35 +15,58 @@ var tree1 = `
 }
 `
 
-type UnitTest struct {
+var treeWord = `
+{"a.txt" : "",
+ "b.txt" : "",
+ "c"     : {"d.txt":"", "~$wtf.txt":"", "f" : {"g.txt" : ""}},
+}
+`
+
+var treeStrange = `
+{"a.txt" : "",
+ "b.txt" : "",
+ "c"     : {"d.txt":"", "à.txt":"", "f" : {"g(par).txt" : ""}},
+}
+`
+
+type stateStruct struct {
 	j      *jt.J
 	App    *App
 	config gen.CopyDirConfigBuilder
 }
 
-type UTest = *UnitTest
+type state = *stateStruct
 
-func NewInfo(t *testing.T) UTest {
-	info := UnitTest{
-		j:      jt.New(t),
+func NewInfo(j *jt.J) state {
+	info := stateStruct{
+		j:      j,
 		config: gen.NewCopyDirConfig(),
 	}
 	return &info
 }
 
 func TestCopyDir(t *testing.T) {
-	info := NewInfo(t)
-	j := info.j
-
-	var jsmap = JSMapFromStringM(tree1)
-
-	j.GenerateSubdirs(j.GetTestResultsDir().JoinM("source"), jsmap)
-
-	info.start()
-	j.AssertGenerated()
+	j := jt.New(t)
+	NewInfo(j).gen(tree1).execute()
 }
 
-func (t UTest) app() *App {
+func TestWordBackups(t *testing.T) {
+	j := jt.New(t)
+	NewInfo(j).gen(treeWord).execute()
+}
+
+func TestStrangeChars(t *testing.T) {
+	j := jt.New(t)
+	NewInfo(j).gen(treeStrange).execute()
+}
+
+func (t state) gen(structure string) state {
+	var jsmap = JSMapFromStringM(structure)
+	t.j.GenerateSubdirs(t.j.GetTestResultsDir().JoinM("source"), jsmap)
+	return t
+}
+
+func (t state) app() *App {
 	if t.App == nil {
 		t.App = prepareApp()
 		oper := &CopyDirOper{}
@@ -60,11 +80,19 @@ func (t UTest) app() *App {
 	return t.App
 }
 
-func (t UTest) start() {
+func (t state) start() {
 	t.app()
 	configPath := t.j.GetTestResultsDir().JoinM("copydir-args.json")
 	configPath.WriteStringM(t.config.String())
-	t.App.AddTestArgs("-a " + configPath.String())
-	t.App.AddTestArgs("--verbose")
+	t.app().AddTestArgs("-a " + configPath.String())
+	if t.j.Verbose() {
+		t.app().AddTestArgs("--verbose")
+	}
 	t.App.Start()
+}
+
+func (t state) execute() state {
+	t.start()
+	t.j.AssertGenerated()
+	return t
 }
