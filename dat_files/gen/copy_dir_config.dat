@@ -1,0 +1,7 @@
+class {
+  string source;
+  string dest;
+  bool clean_log;
+  string log = "problems.txt";
+  bool retain_microsoft;
+}
