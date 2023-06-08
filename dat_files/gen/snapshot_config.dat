@@ -3,4 +3,5 @@ class {
   int max_images = 2000;
   string output_dir;
   int debug_max_iterations;
+  int num_devices = 2;   // 2 for a dual monitor system
 }
