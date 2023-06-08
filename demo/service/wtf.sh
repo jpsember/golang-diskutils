@@ -2,4 +2,4 @@
 set -eu
 home="/Users/home"
 now=$(date "+%Y-%m-%d %H.%M.%S")
-echo $now >> "$home/Desktop/TestFile.txt"
+echo "$now  Arguments: $@" >> "$home/Desktop/This-is-wtf.txt"
