@@ -15,7 +15,7 @@ type SnapshotOper struct {
 	BaseObject
 	config     SnapshotConfig
 	outputDir  Path
-	imagePaths *Array[Path]
+	imageNames *Array[string]
 }
 
 func (oper *SnapshotOper) GetHelp(bp *BasePrinter) {
@@ -66,11 +66,13 @@ func (oper *SnapshotOper) Perform(app *App) {
 }
 
 func (oper *SnapshotOper) constructPathBuffer() {
-	v := NewArray[Path]()
+	v := NewArray[string]()
 	w := NewDirWalk(oper.outputDir).IncludeExtensions("jpg")
-	v.Append(w.FilesRelative()...)
+	for _, x := range w.FilesRelative() {
+		v.Add(x.Base())
+	}
 	oper.Log("existing images:", v.Size())
-	oper.imagePaths = v
+	oper.imageNames = v
 }
 
 func (oper *SnapshotOper) takeSnapshot() {
@@ -88,7 +90,7 @@ func (oper *SnapshotOper) takeSnapshot() {
 			continue
 		}
 		CheckOk(err, "system call failed:", err)
-		oper.imagePaths.Add(imagePath)
+		oper.imageNames.Add(imagePath.Base())
 	}
 }
 
@@ -103,14 +105,16 @@ func makeSysCall(cmdLineArgs []string) (string, error) {
 
 func (oper *SnapshotOper) trimPathBuffer() {
 	Todo("have generated scalar int fields default to 'int', not 'int32'")
-	for oper.imagePaths.Size() > int(oper.config.MaxImages()) {
-		p := oper.outputDir.JoinPathM(oper.imagePaths.First())
-		oper.imagePaths.Remove(0, 1)
+	for oper.imageNames.Size() > int(oper.config.MaxImages()) {
+		p := oper.outputDir.JoinM(oper.imageNames.First())
+		oper.imageNames.Remove(0, 1)
 		oper.Log("Deleting:", p)
 		p.DeleteFileM()
 	}
 }
 
 func (oper *SnapshotOper) getNextImagePath(timestamp int64, deviceNum int) Path {
-	return oper.outputDir.JoinM(IntToString(deviceNum) + "_" + strconv.FormatInt(timestamp, 10) + ".jpg")
+	devStr := IntToString(deviceNum)
+	timeStr := strconv.FormatInt(timestamp, 10)
+	return oper.outputDir.JoinM(timeStr + "_" + devStr + ".jpg")
 }
