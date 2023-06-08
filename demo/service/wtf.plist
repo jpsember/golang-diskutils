@@ -5,7 +5,7 @@
     <key>Label</key>
     <string>wtf</string>
     <key>Program</key>
-    <string>/Users/home/github_projects/golang-diskutils/demo/snapshot/testdaemon.sh</string>
+    <string>/Users/home/github_projects/golang-diskutils/demo/snapshot/wtf.sh</string>
     <key>StandardErrorPath</key>
     <string>/var/log/eod-email.log</string>
     <key>StandardOutPath</key>

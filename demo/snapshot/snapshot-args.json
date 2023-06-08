@@ -1,6 +1,0 @@
-{ "debug_max_iterations" : 10,
-      "interval_seconds" : 8,
-            "max_images" : 5,
-            "output_dir" : "snapshots",
-            "num_devices" : 2,
-}
