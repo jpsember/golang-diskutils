@@ -1,4 +1,4 @@
-package main
+package names
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	. "github.com/jpsember/golang-base/base"
 	. "github.com/jpsember/golang-base/files"
 	. "golang-diskutils/gen"
+	. "golang-diskutils/internal"
 	"os"
 	"regexp"
 	"strings"
@@ -61,7 +62,7 @@ func (oper *FilenamesOper) UserCommand() string {
 }
 
 func (oper *FilenamesOper) relToSource(path Path) string {
-	return relativePath(path, oper.sourcePath)
+	return RelativePath(path, oper.sourcePath)
 }
 
 func (oper *FilenamesOper) Perform(app *App) {
@@ -72,7 +73,7 @@ func (oper *FilenamesOper) Perform(app *App) {
 		var operSourceDir Path
 		problem := ""
 		for {
-			operSourceDir, problem = procPath(app, "Source directory", oper.config.Source())
+			operSourceDir, problem = ProcPath(app, "Source directory", oper.config.Source())
 			if problem != "" {
 				break
 			}
@@ -230,14 +231,12 @@ func (oper *FilenamesOper) GetHelp(bp *BasePrinter) {
 	bp.Pr("Examine filenames; source <source dir> [clean_log]")
 }
 
-var windowsTempPattern = Regexp(`^~\$`)
-
 func (oper *FilenamesOper) examineFilename(p Path) {
 	oper.deleteFlag = false
 	base := p.Base()
 
 	// See https://en.wikipedia.org/wiki/Tilde
-	if windowsTempPattern.MatchString(base) {
+	if WindowsTempPattern.MatchString(base) {
 		switch oper.config.Microsoft() {
 		default:
 			Die("unsupported option:", oper.config.Microsoft())
@@ -288,10 +287,4 @@ func (oper *FilenamesOper) printDiskUsage(dirInfo DirInfo) {
 	for _, ch := range dirInfo.Children.Array() {
 		oper.printDiskUsage(ch)
 	}
-}
-
-func addExamineFilenamesOper(app *App) {
-	var oper = &FilenamesOper{}
-	oper.ProvideName("names")
-	app.RegisterOper(AssertJsonOper(oper))
 }

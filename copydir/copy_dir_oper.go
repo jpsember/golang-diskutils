@@ -1,10 +1,11 @@
-package main
+package copydir
 
 import (
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/base"
 	. "github.com/jpsember/golang-base/files"
 	. "golang-diskutils/gen"
+	. "golang-diskutils/internal"
 	"io"
 	"os"
 )
@@ -34,56 +35,12 @@ func (oper *CopyDirOper) UserCommand() string {
 	return "copydir"
 }
 
-func procPath(app *App, desc string, expr string) (Path, string) {
-	var err error
-	var result Path
-
-	for {
-		result, err = NewPath(expr)
-		if err != nil {
-			break
-		}
-
-		result = makeAbs(result, app.StartDir())
-		break
-	}
-	problem := ""
-	if err != nil {
-		problem = desc + "; problem: " + err.Error()
-	}
-	return result, problem
-}
-
-func makeAbs(path Path, absPath Path) Path {
-	if path.IsAbs() {
-		return path
-	}
-	return absPath.JoinM(path.String())
-}
-
-func relativePath(path Path, to Path) string {
-	pathStr := path.String()
-	toStr := to.String()
-	i := len(pathStr)
-	j := len(toStr)
-	if i == 0 || j == 0 || i < j {
-		BadArg("can't make:", CR, INDENT, Quoted(pathStr), CR, OUTDENT, "relative to:", CR, INDENT, Quoted(toStr))
-	}
-	var result string
-	if i == j {
-		result = ""
-	} else {
-		result = pathStr[j+1:]
-	}
-	return result
-}
-
 func (oper *CopyDirOper) relToSource(path Path) string {
-	return relativePath(path, oper.sourcePath)
+	return RelativePath(path, oper.sourcePath)
 }
 
 func (oper *CopyDirOper) relToTarget(path Path) string {
-	return relativePath(path, oper.destPath)
+	return RelativePath(path, oper.destPath)
 }
 
 func (oper *CopyDirOper) Perform(app *App) {
@@ -93,9 +50,9 @@ func (oper *CopyDirOper) Perform(app *App) {
 		var operSourceDir, operDestDir Path
 		problem := ""
 		for {
-			operSourceDir, problem = procPath(app, "source directory", oper.config.Source())
+			operSourceDir, problem = ProcPath(app, "source directory", oper.config.Source())
 			if problem == "" {
-				operDestDir, problem = procPath(app, "dest directory", oper.config.Dest())
+				operDestDir, problem = ProcPath(app, "dest directory", oper.config.Dest())
 			}
 			if problem != "" {
 				break
@@ -159,7 +116,7 @@ func (oper *CopyDirOper) Perform(app *App) {
 				continue
 			}
 
-			if windowsTempPattern.MatchString(sourceFile.Base()) {
+			if WindowsTempPattern.MatchString(sourceFile.Base()) {
 				if !oper.config.RetainMicrosoft() {
 					oper.errLog.Add(Warning, "skipping Word backup file", oper.relToSource(sourceFile))
 					continue
@@ -283,10 +240,4 @@ func copyFileContents(srcp, dstp Path) (err error) {
 
 func (oper *CopyDirOper) GetHelp(bp *BasePrinter) {
 	bp.Pr("Copy a directory; source <source dir> dest <dest dir> [clean_log]")
-}
-
-func addCopyDirOper(app *App) {
-	var oper = &CopyDirOper{}
-	oper.ProvideName(oper)
-	app.RegisterOper(AssertJsonOper(oper))
 }

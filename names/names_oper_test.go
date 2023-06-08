@@ -1,10 +1,11 @@
-package main
+package names
 
 import (
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/json"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
+	. "golang-diskutils/internal"
 	"testing"
 )
 
@@ -56,7 +57,7 @@ func (t nstate) gen(structure string) nstate {
 
 func (t nstate) app() *App {
 	if t.App == nil {
-		t.App = prepareApp()
+		t.App = PrepareApp()
 		oper := &FilenamesOper{}
 		oper.ProvideName(oper)
 		t.App.RegisterOper(oper)

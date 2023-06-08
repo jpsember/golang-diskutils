@@ -1,10 +1,11 @@
-package main
+package copydir
 
 import (
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/json"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
+	. "golang-diskutils/internal"
 	"testing"
 )
 
@@ -68,7 +69,7 @@ func (t state) gen(structure string) state {
 
 func (t state) app() *App {
 	if t.App == nil {
-		t.App = prepareApp()
+		t.App = PrepareApp()
 		oper := &CopyDirOper{}
 		oper.ProvideName(oper)
 		t.App.RegisterOper(oper)
