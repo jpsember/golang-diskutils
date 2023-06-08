@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>wtf</string>
+    <key>Program</key>
+    <string>/Users/home/github_projects/golang-diskutils/demo/snapshot/testdaemon.sh</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/eod-email.log</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/eod-email.log</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StartInterval</key>
+    <integer>15</integer>
+</dict>
+</plist>
