@@ -5,25 +5,12 @@
     <key>Label</key>
     <string>wtf</string>
 
-
-
-  <key>Program</key>
-    <string>/Users/home/github_projects/golang-diskutils/demo/service/wtf.sh</string>
-
-
-
-
- <key>ProgramArguments</key>
-    <array>
-        <string>/Users/home/github_projects/golang-diskutils/demo/service/wtf.sh</string>
-         <string>hello</string>
-         <string>-bob</string>
-    </array>
-
-
-
-
-
+    <key>ProgramArguments</key>
+      <array>
+          <string>/Users/home/github_projects/golang-diskutils/demo/service/wtf.sh</string>
+          <string>hello</string>
+          <string>-bob</string>
+      </array>
 
     <key>RunAtLoad</key>
     <true/>
