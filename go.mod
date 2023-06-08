@@ -2,4 +2,4 @@ module golang-diskutils
 
 go 1.20
 
-require github.com/jpsember/golang-base v0.0.0-20230607221809-aeb32f9c2bff
+require github.com/jpsember/golang-base v0.0.0-20230608170752-9c9b1cb7cbcd

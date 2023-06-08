@@ -54,7 +54,7 @@ func ProcPath(app *App, desc string, expr string) (Path, string) {
 			break
 		}
 
-		result = MakeAbs(result, app.StartDir())
+		result = result.GetAbsFromM(app.StartDir())
 		break
 	}
 	problem := ""
@@ -62,12 +62,4 @@ func ProcPath(app *App, desc string, expr string) (Path, string) {
 		problem = desc + "; problem: " + err.Error()
 	}
 	return result, problem
-}
-
-func MakeAbs(path Path, absPath Path) Path {
-	Todo("put this in the Path package")
-	if path.IsAbs() {
-		return path
-	}
-	return absPath.JoinM(path.String())
 }

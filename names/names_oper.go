@@ -109,15 +109,6 @@ func (oper *FilenamesOper) Perform(app *App) {
 	oper.errLog.PrintSummary()
 }
 
-func (oper *FilenamesOper) relativePath(path Path) string {
-	Todo("avoid calling this")
-	x := path.String()
-	if len(x) < oper.sourcePrefixLen {
-		BadArg("relativePath argument:", path, "less than source", oper.sourcePath)
-	}
-	return x[oper.sourcePrefixLen:]
-}
-
 func (oper *FilenamesOper) processDir(dirInfo DirInfo) {
 	if oper.quitting {
 		return
@@ -169,8 +160,7 @@ func (oper *FilenamesOper) processDir(dirInfo DirInfo) {
 			continue
 		}
 
-		sourceFileSuffix := oper.relativePath(sourceFile)
-		oper.Log(DepthDots(dirInfo.Depth, sourceFileSuffix))
+		oper.Log(DepthDots(dirInfo.Depth, RelativePath(sourceFile, oper.sourcePath)))
 
 		stat, err := os.Stat(sourceFile.String())
 		if err != nil {
