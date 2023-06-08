@@ -11,34 +11,42 @@ import (
 	"time"
 )
 
-type SnapshotOper struct {
+type Struct struct {
 	BaseObject
 	config     SnapshotConfig
 	outputDir  Path
 	imageNames *Array[string]
 }
 
-func (oper *SnapshotOper) GetHelp(bp *BasePrinter) {
+type Snap = *Struct
+
+func AddOper(app *App) {
+	var oper = &Struct{}
+	oper.ProvideName("snapshot")
+	app.RegisterOper(AssertJsonOper(oper))
+}
+
+func (oper Snap) GetHelp(bp *BasePrinter) {
 	bp.Pr("take periodic snapshots of screen(s)")
 }
 
-func (oper *SnapshotOper) GetArguments() DataClass {
+func (oper Snap) GetArguments() DataClass {
 	return DefaultSnapshotConfig
 }
 
-func (oper *SnapshotOper) ArgsFileMustExist() bool {
+func (oper Snap) ArgsFileMustExist() bool {
 	return false
 }
 
-func (oper *SnapshotOper) AcceptArguments(a DataClass) {
+func (oper Snap) AcceptArguments(a DataClass) {
 	oper.config = a.(SnapshotConfig)
 }
 
-func (oper *SnapshotOper) UserCommand() string {
+func (oper Snap) UserCommand() string {
 	return "snapshot"
 }
 
-func (oper *SnapshotOper) Perform(app *App) {
+func (oper Snap) Perform(app *App) {
 	oper.SetVerbose(app.Verbose())
 
 	oper.outputDir = NewPathM(oper.config.OutputDir()).GetAbsM()
@@ -65,7 +73,7 @@ func (oper *SnapshotOper) Perform(app *App) {
 	}
 }
 
-func (oper *SnapshotOper) constructPathBuffer() {
+func (oper Snap) constructPathBuffer() {
 	v := NewArray[string]()
 	w := NewDirWalk(oper.outputDir).IncludeExtensions("jpg")
 	for _, x := range w.FilesRelative() {
@@ -75,7 +83,7 @@ func (oper *SnapshotOper) constructPathBuffer() {
 	oper.imageNames = v
 }
 
-func (oper *SnapshotOper) takeSnapshot() {
+func (oper Snap) takeSnapshot() {
 	timestamp := time.Now().UnixMilli()
 	for devNum := 0; devNum < int(oper.config.NumDevices()); devNum++ {
 		imagePath := oper.getNextImagePath(timestamp, devNum)
@@ -103,7 +111,7 @@ func makeSysCall(cmdLineArgs []string) (string, error) {
 	return strout, err
 }
 
-func (oper *SnapshotOper) trimPathBuffer() {
+func (oper Snap) trimPathBuffer() {
 	Todo("have generated scalar int fields default to 'int', not 'int32'")
 	for oper.imageNames.Size() > int(oper.config.MaxImages()) {
 		p := oper.outputDir.JoinM(oper.imageNames.First())
@@ -113,7 +121,7 @@ func (oper *SnapshotOper) trimPathBuffer() {
 	}
 }
 
-func (oper *SnapshotOper) getNextImagePath(timestamp int64, deviceNum int) Path {
+func (oper Snap) getNextImagePath(timestamp int64, deviceNum int) Path {
 	devStr := IntToString(deviceNum)
 	timeStr := strconv.FormatInt(timestamp, 10)
 	return oper.outputDir.JoinM(timeStr + "_" + devStr + ".jpg")

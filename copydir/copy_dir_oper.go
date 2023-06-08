@@ -19,6 +19,12 @@ type Struct struct {
 	verifyTs   int
 }
 
+func AddOper(app *App) {
+	var oper = &Struct{}
+	oper.ProvideName("copydir")
+	app.RegisterOper(AssertJsonOper(oper))
+}
+
 type CopyDir = *Struct
 
 func (oper CopyDir) GetArguments() DataClass {

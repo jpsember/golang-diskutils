@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-type FilenamesOper struct {
+type Struct struct {
 	BaseObject
 	errLog          ErrLog
 	errPath         Path
@@ -22,6 +22,14 @@ type FilenamesOper struct {
 	deleteFlag      bool
 	sourcePrefixLen int
 	quitting        bool
+}
+
+type Names = *Struct
+
+func AddOper(app *App) {
+	var oper = &Struct{}
+	oper.ProvideName("names")
+	app.RegisterOper(AssertJsonOper(oper))
 }
 
 type DirInfoStruct struct {
@@ -45,27 +53,27 @@ func NewDirInfo(path Path, parent *DirInfoStruct) DirInfo {
 	return &s
 }
 
-func (oper *FilenamesOper) GetArguments() DataClass {
+func (oper Names) GetArguments() DataClass {
 	return DefaultNamesConfig
 }
 
-func (oper *FilenamesOper) ArgsFileMustExist() bool {
+func (oper Names) ArgsFileMustExist() bool {
 	return false
 }
 
-func (oper *FilenamesOper) AcceptArguments(a DataClass) {
+func (oper Names) AcceptArguments(a DataClass) {
 	oper.config = a.(NamesConfig)
 }
 
-func (oper *FilenamesOper) UserCommand() string {
+func (oper Names) UserCommand() string {
 	return "names"
 }
 
-func (oper *FilenamesOper) relToSource(path Path) string {
+func (oper Names) relToSource(path Path) string {
 	return RelativePath(path, oper.sourcePath)
 }
 
-func (oper *FilenamesOper) Perform(app *App) {
+func (oper Names) Perform(app *App) {
 	Todo("Option to rename files, e.g. trimming whitespace, changing dashes")
 	oper.SetVerbose(app.Verbose())
 	oper.pattern = Regexp(oper.config.Pattern())
@@ -109,7 +117,7 @@ func (oper *FilenamesOper) Perform(app *App) {
 	oper.errLog.PrintSummary()
 }
 
-func (oper *FilenamesOper) processDir(dirInfo DirInfo) {
+func (oper Names) processDir(dirInfo DirInfo) {
 	if oper.quitting {
 		return
 	}
@@ -205,7 +213,7 @@ func DirSizeExpr(size int64) string {
 	return fmt.Sprintf("%5.1f %v", amt, pref)
 }
 
-func (oper *FilenamesOper) processDeleteFlag(path Path) bool {
+func (oper Names) processDeleteFlag(path Path) bool {
 	result := oper.deleteFlag
 	if result {
 		if path.IsDir() {
@@ -217,11 +225,11 @@ func (oper *FilenamesOper) processDeleteFlag(path Path) bool {
 	return result
 }
 
-func (oper *FilenamesOper) GetHelp(bp *BasePrinter) {
+func (oper Names) GetHelp(bp *BasePrinter) {
 	bp.Pr("Examine filenames; source <source dir> [clean_log]")
 }
 
-func (oper *FilenamesOper) examineFilename(p Path) {
+func (oper Names) examineFilename(p Path) {
 	oper.deleteFlag = false
 	base := p.Base()
 
@@ -247,7 +255,7 @@ func (oper *FilenamesOper) examineFilename(p Path) {
 	}
 }
 
-func (oper *FilenamesOper) highlightStrangeCharacters(str string) string {
+func (oper Names) highlightStrangeCharacters(str string) string {
 	// I was doing a binary search, but I found out that due to utf-8, some chars (runes)
 	// are different lengths; so just build up the substring from the left until we find the problem
 	sb := strings.Builder{}
@@ -269,7 +277,7 @@ func (oper *FilenamesOper) highlightStrangeCharacters(str string) string {
 	return Quoted(sb.String() + "<<<" + sbPost.String())
 }
 
-func (oper *FilenamesOper) printDiskUsage(dirInfo DirInfo) {
+func (oper Names) printDiskUsage(dirInfo DirInfo) {
 	Pr(Spaces(dirInfo.Depth*4), DirSizeExpr(dirInfo.DiskUsage), ":", dirInfo.Path.Base())
 	if dirInfo.Depth >= int(oper.config.Depth()) {
 		return

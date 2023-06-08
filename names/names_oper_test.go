@@ -58,7 +58,7 @@ func (t nstate) gen(structure string) nstate {
 func (t nstate) app() *App {
 	if t.App == nil {
 		t.App = PrepareApp()
-		oper := &FilenamesOper{}
+		oper := &Struct{}
 		oper.ProvideName(oper)
 		t.App.RegisterOper(oper)
 
