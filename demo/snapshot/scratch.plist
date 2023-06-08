@@ -1,0 +1,7 @@
+    <key>StandardErrorPath</key>
+    <string>/var/log/eod-email.log</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/eod-email.log</string>
+    <key>RunAtLoad</key>
+    <true/>
+
