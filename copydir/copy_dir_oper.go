@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-type CopyDirOper struct {
+type Struct struct {
 	BaseObject
 	errLog     ErrLog
 	sourcePath Path
@@ -19,31 +19,33 @@ type CopyDirOper struct {
 	verifyTs   int
 }
 
-func (oper *CopyDirOper) GetArguments() DataClass {
+type CopyDir = *Struct
+
+func (oper CopyDir) GetArguments() DataClass {
 	return DefaultCopyDirConfig
 }
 
-func (oper *CopyDirOper) ArgsFileMustExist() bool {
+func (oper CopyDir) ArgsFileMustExist() bool {
 	return false
 }
 
-func (oper *CopyDirOper) AcceptArguments(a DataClass) {
+func (oper CopyDir) AcceptArguments(a DataClass) {
 	oper.config = a.(CopyDirConfig)
 }
 
-func (oper *CopyDirOper) UserCommand() string {
+func (oper CopyDir) UserCommand() string {
 	return "copydir"
 }
 
-func (oper *CopyDirOper) relToSource(path Path) string {
+func (oper CopyDir) relToSource(path Path) string {
 	return RelativePath(path, oper.sourcePath)
 }
 
-func (oper *CopyDirOper) relToTarget(path Path) string {
+func (oper CopyDir) relToTarget(path Path) string {
 	return RelativePath(path, oper.destPath)
 }
 
-func (oper *CopyDirOper) Perform(app *App) {
+func (oper CopyDir) Perform(app *App) {
 	oper.SetVerbose(app.Verbose())
 
 	{
@@ -238,6 +240,6 @@ func copyFileContents(srcp, dstp Path) (err error) {
 	return
 }
 
-func (oper *CopyDirOper) GetHelp(bp *BasePrinter) {
+func (oper CopyDir) GetHelp(bp *BasePrinter) {
 	bp.Pr("Copy a directory; source <source dir> dest <dest dir> [clean_log]")
 }

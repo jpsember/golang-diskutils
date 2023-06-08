@@ -70,7 +70,7 @@ func (t state) gen(structure string) state {
 func (t state) app() *App {
 	if t.App == nil {
 		t.App = PrepareApp()
-		oper := &CopyDirOper{}
+		oper := &Struct{}
 		oper.ProvideName(oper)
 		t.App.RegisterOper(oper)
 

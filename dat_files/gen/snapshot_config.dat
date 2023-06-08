@@ -1,0 +1,6 @@
+class {
+  int interval_seconds = 300;  // 5 minutes
+  int max_images = 2000;
+  string output_dir;
+  int debug_max_iterations;
+}
