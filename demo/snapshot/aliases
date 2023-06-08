@@ -1,0 +1,6 @@
+# Type 'source aliases'
+
+alias dbstop="sudo systemctl stop snapshot.service"
+alias dblog="journalctl -f -u snapshot.service"
+alias dbscript="cat /etc/systemd/system/moveimages.service"
+alias dbrebuild="dbstop; install.sh"

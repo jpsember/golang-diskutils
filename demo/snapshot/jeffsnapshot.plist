@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>jeffsnapshot</string>
+    <key>ServiceDescription</key>
+    <string>Jeff golang snapshot program</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/home/github_projects/golang-diskutils/diskutils</string>
+        <string>snapshot</string>
+        <string>--startdir</string>
+        <string>/Users/home/github_projects/golang-diskutils/diskutils/demo/snapshot</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+
+
+
+    <key>StandardOutPath</key>
+    <string>/Users/home/github_projects/golang-diskutils/diskutils/demo/snapshot/stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/home/github_projects/golang-diskutils/diskutils/demo/snapshot/stderr.log</string>
+</dict>
+</plist>
