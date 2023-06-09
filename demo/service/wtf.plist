@@ -6,11 +6,27 @@
     <string>wtf</string>
 
     <key>ProgramArguments</key>
+
       <array>
-          <string>/Users/home/github_projects/golang-diskutils/demo/service/wtf.sh</string>
-          <string>hello</string>
-          <string>-bob</string>
+          <string>/Users/home/github_projects/golang-diskutils/diskutils</string>
+          <string>names</string>
+           <string>--startdir</string>
+          <string>/Users/home/Desktop</string>
+          <string>source</string>
+          <string>/Users/home/Desktop</string>
       </array>
+
+
+
+
+<key>StandardOutPath</key>
+
+<string>/Users/home/github_projects/golang-diskutils/demo/service/stdout.txt</string>
+
+<key>StandardErrorPath</key>
+
+<string>/Users/home/github_projects/golang-diskutils/demo/service/stderr.txt</string>
+
 
     <key>RunAtLoad</key>
     <true/>
