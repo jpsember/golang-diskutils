@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>wtf</string>
+    <string>diskutils-snapshot</string>
 
     <key>ProgramArguments</key>
 
