@@ -89,7 +89,7 @@ func (oper Snap) takeSnapshot() {
 		imagePath := oper.getNextImagePath(timestamp, devNum)
 		s := NewArray[string]()
 		dispArg := "-D" + IntToString(1+devNum)
-		s.Append(strings.Split("screencapture -S -T 1 -r -tjpg", " ")...)
+		s.Append(strings.Split("screencapture -x -S -T 1 -r -tjpg", " ")...)
 		s.Add(dispArg)
 		s.Add(imagePath.String())
 		result, err := makeSysCall(s.Array())
