@@ -10,10 +10,10 @@
       <array>
           <string>/Users/home/github_projects/golang-diskutils/diskutils</string>
           <string>names</string>
-           <string>--startdir</string>
-          <string>/Users/home/Desktop</string>
+          <string>--startdir</string>
+          <string>/Users/home/github_projects/studio_skeleton</string>
           <string>source</string>
-          <string>/Users/home/Desktop</string>
+          <string>/Users/home/github_projects/studio_skeleton</string>
       </array>
 
 

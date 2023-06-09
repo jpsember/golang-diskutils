@@ -20,6 +20,9 @@ type ErrLogStruct struct {
 type ErrLog = *ErrLogStruct
 
 func NewErrLog(path Path) ErrLog {
+	if path.Empty() {
+		path = NewPathM("problems.txt")
+	}
 	return &ErrLogStruct{
 		path: path,
 	}

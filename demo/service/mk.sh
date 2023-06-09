@@ -3,6 +3,12 @@ set -eu
 
 clear
 
+echo "Deleting old stderr, stdout"
+rm -f stderr.txt stdout.txt
+
+echo "Pulling"
+(cd ../..;repull.sh)
+
 echo "Making"
 (cd ../..; mk.sh)
 

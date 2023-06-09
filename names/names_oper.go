@@ -103,8 +103,11 @@ func (oper Names) Perform(app *App) {
 	logPath := NewPathOrEmptyM(oper.config.Log())
 	if logPath.NonEmpty() {
 		logPath = app.StartDir().JoinM(logPath.String())
+		Todo("joined logPath to startDir:" + app.StartDir().String() + " result: " + logPath.String())
 	}
+	Todo("attempting to open logPath: " + logPath.String())
 	oper.errLog = NewErrLog(logPath)
+	Todo("it was opened")
 	oper.errLog.SkipHeader = app.HasTestArgs()
 	oper.errLog.Clean = oper.config.CleanLog()
 
@@ -115,6 +118,8 @@ func (oper Names) Perform(app *App) {
 	oper.printDiskUsage(rootInfo)
 	Pr(Dashes)
 	oper.errLog.PrintSummary()
+
+	Todo("and we are done performing")
 }
 
 func (oper Names) processDir(dirInfo DirInfo) {
