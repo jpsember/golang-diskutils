@@ -9,14 +9,10 @@
 
       <array>
           <string>/Users/home/github_projects/golang-diskutils/diskutils</string>
-          <string>names</string>
-          <string>--startdir</string>
-          <string>/Users/home/github_projects/studio_skeleton</string>
-          <string>source</string>
-          <string>/Users/home/github_projects/studio_skeleton</string>
+          <string>snapshot</string>
+          <string>output_dir</string>
+          <string>/Users/home/github_projects/golang-diskutils/demo/service/snaps</string>
       </array>
-
-
 
 
 <key>StandardOutPath</key>
@@ -31,8 +27,9 @@
     <key>RunAtLoad</key>
     <true/>
 
+    <!-- This will only get called if the program exits for some reason -->
     <key>StartInterval</key>
-    <integer>15</integer>
+    <integer>300</integer>
 
 </dict>
 </plist>
