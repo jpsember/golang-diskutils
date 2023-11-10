@@ -1,22 +1,26 @@
 package names
 
 import (
-	. "github.com/jpsember/golang-base/app"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
+)
+
+import (
+	. "github.com/jpsember/golang-base/app"
+	. "github.com/jpsember/golang-base/base"
 	. "golang-diskutils/internal"
 	"testing"
 )
 
 type namesStateStruct struct {
-	j      *jt.J
+	j      jt.JTest
 	App    *App
 	config gen.NamesConfigBuilder
 }
 
 type nstate = *namesStateStruct
 
-func NamesInfo(j *jt.J) nstate {
+func NamesInfo(j jt.JTest) nstate {
 	info := namesStateStruct{
 		j:      j,
 		config: gen.NewNamesConfig(),
