@@ -2,7 +2,6 @@ package names
 
 import (
 	. "github.com/jpsember/golang-base/app"
-	. "github.com/jpsember/golang-base/json"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
 	. "golang-diskutils/internal"

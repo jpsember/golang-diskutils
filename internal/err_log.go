@@ -2,7 +2,6 @@ package internal
 
 import (
 	. "github.com/jpsember/golang-base/base"
-	. "github.com/jpsember/golang-base/files"
 	"os"
 	"time"
 )

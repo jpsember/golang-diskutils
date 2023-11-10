@@ -3,7 +3,6 @@ package snapshot
 import (
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/base"
-	. "github.com/jpsember/golang-base/files"
 	. "golang-diskutils/gen"
 	"os/exec"
 	"strconv"
@@ -56,7 +55,7 @@ func (oper Snap) Perform(app *App) {
 
 	oper.constructPathBuffer()
 
-	var iter int32
+	var iter int
 
 	for {
 		oper.Log("Taking snapshot; iteration", iter)

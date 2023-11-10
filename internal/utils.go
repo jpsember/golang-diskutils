@@ -3,7 +3,6 @@ package internal
 import (
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/base"
-	. "github.com/jpsember/golang-base/files"
 )
 
 import "strings"

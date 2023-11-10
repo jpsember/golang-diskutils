@@ -2,7 +2,7 @@ package copydir
 
 import (
 	. "github.com/jpsember/golang-base/app"
-	. "github.com/jpsember/golang-base/json"
+	"github.com/jpsember/golang-base/base"
 	"github.com/jpsember/golang-base/jt"
 	"golang-diskutils/gen"
 	. "golang-diskutils/internal"
@@ -31,14 +31,14 @@ var treeStrange = `
 `
 
 type stateStruct struct {
-	j      *jt.J
+	j      jt.JTest
 	App    *App
 	config gen.CopyDirConfigBuilder
 }
 
 type state = *stateStruct
 
-func NewInfo(j *jt.J) state {
+func NewInfo(j jt.JTest) state {
 	info := stateStruct{
 		j:      j,
 		config: gen.NewCopyDirConfig(),
@@ -62,7 +62,7 @@ func TestStrangeChars(t *testing.T) {
 }
 
 func (t state) gen(structure string) state {
-	var jsmap = JSMapFromStringM(structure)
+	var jsmap = base.JSMapFromStringM(structure)
 	t.j.GenerateSubdirs(t.j.GetTestResultsDir().JoinM("source"), jsmap)
 	return t
 }

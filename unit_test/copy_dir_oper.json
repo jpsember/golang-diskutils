@@ -1,4 +1,7 @@
-{      "TestCopyDir" : 4444,
+{          "CopyDir" : 5684,
+      "StrangeChars" : 3400,
+       "TestCopyDir" : 4444,
   "TestStrangeChars" : 6804,
-   "TestWordBackups" : 2105
+   "TestWordBackups" : 2105,
+       "WordBackups" : 1123
 }

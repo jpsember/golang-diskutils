@@ -4,7 +4,6 @@ import (
 	"fmt"
 	. "github.com/jpsember/golang-base/app"
 	. "github.com/jpsember/golang-base/base"
-	. "github.com/jpsember/golang-base/files"
 	. "golang-diskutils/gen"
 	. "golang-diskutils/internal"
 	"os"
