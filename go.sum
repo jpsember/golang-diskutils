@@ -1,4 +1,4 @@
-github.com/jpsember/golang-base v0.0.0-20231110222841-cf9f87a72798 h1:uugrVmfj8z5rqPnIByZJ7rxMjpk0ZXgddNf0egOXR8A=
-github.com/jpsember/golang-base v0.0.0-20231110222841-cf9f87a72798/go.mod h1:TKuFzTKsgrVzcqldi2lAU7IkirEVurihR70JYYICW8E=
+github.com/jpsember/golang-base v0.0.0-20231110223715-4a92e5a6729e h1:h0T7XcIMD5ty4BFifpUa2g6tYldQolvFltJkf2sI2PY=
+github.com/jpsember/golang-base v0.0.0-20231110223715-4a92e5a6729e/go.mod h1:TKuFzTKsgrVzcqldi2lAU7IkirEVurihR70JYYICW8E=
 golang.org/x/crypto v0.10.0 h1:LKqV2xt9+kDzSTfOhx4FrkEBcMrAgHSYgzywV9zcGmM=
 golang.org/x/crypto v0.10.0/go.mod h1:o4eNf7Ede1fv+hwOwZsTHl9EsPFO6q6ZvYR8vYfY45I=

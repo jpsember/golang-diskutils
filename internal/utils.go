@@ -21,7 +21,7 @@ var WindowsTempPattern = Regexp(`^~\$`)
 
 func PrepareApp() *App {
 	var app = NewApp()
-	app.SetName("osxutils")
+	app.SetName("diskutils")
 	app.Version = "1.1.0"
 	return app
 }
