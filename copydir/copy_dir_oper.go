@@ -245,6 +245,8 @@ func copyFileContents(srcp, dstp Path) (err error) {
 	return
 }
 
-func (oper CopyDir) GetHelp(bp *BasePrinter) {
-	bp.Pr("Copy a directory; source <source dir> dest <dest dir> [clean_log]")
+func (oper CopyDir) GetHelp() (summary, usage string) {
+	summary = "Copy a directory"
+	usage = "source <source dir> dest <dest dir> [clean_log]"
+	return
 }

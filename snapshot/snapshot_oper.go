@@ -25,8 +25,9 @@ func AddOper(app *App) {
 	app.RegisterOper(AssertJsonOper(oper))
 }
 
-func (oper Snap) GetHelp(bp *BasePrinter) {
-	bp.Pr("take periodic snapshots of screen(s)")
+func (oper Snap) GetHelp() (summary, usage string) {
+	summary = "Take periodic snapshots of screen(s)"
+	return
 }
 
 func (oper Snap) GetArguments() DataClass {

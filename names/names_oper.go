@@ -224,8 +224,10 @@ func (oper Names) processDeleteFlag(path Path) bool {
 	return result
 }
 
-func (oper Names) GetHelp(bp *BasePrinter) {
-	bp.Pr("Examine filenames; source <source dir> [clean_log]")
+func (oper Names) GetHelp() (summary, usage string) {
+	summary = "Examine filenames"
+	usage = "source <source dir> [clean_log]"
+	return
 }
 
 func (oper Names) examineFilename(p Path) {
