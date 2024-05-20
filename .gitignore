@@ -7,8 +7,5 @@ unit_test/generated
 # Executable
 diskutils
 
-# Generated data classes
-gen
-# ... but do include their .dat counterparts
-!dat_files/gen
+demo
 
